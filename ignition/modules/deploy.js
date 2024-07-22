@@ -1,11 +1,10 @@
 const { buildModule } = require("@nomicfoundation/hardhat-ignition/modules");
 
-const TokenModule = buildModule("TokenModule", (m) => {
-  // You need to provide the unlock time here. Calculate an appropriate future time.
-  const unlockTime = Math.floor(Date.now() / 1000) + (24 * 60 * 60); // 24 hours from now in seconds
-  const token = m.contract("Sample", [unlockTime]);
+const SwapModule = buildModule("SwapModule", (m) => {
+  const uniswapRouterAddress = "0x586a31a288e178369fff020ba63d2224cf8661e9";
+  const multiTokenSwap = m.contract("MultiTokenSwap", [uniswapRouterAddress]);
 
-  return { token };
+  return { multiTokenSwap };
 });
 
-module.exports = TokenModule;
+module.exports = SwapModule;

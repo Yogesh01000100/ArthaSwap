@@ -1,34 +1,57 @@
-// SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.24;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
 
-// Uncomment this line to use console.log
-// import "hardhat/console.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
+import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
 
-contract Sample {
-    uint public unlockTime;
-    address payable public owner;
+contract MultiTokenSwap {
+    ISwapRouter public immutable swapRouter;
 
-    event Withdrawal(uint amount, uint when);
-
-    constructor(uint _unlockTime) payable {
-        require(
-            block.timestamp < _unlockTime,
-            "Unlock time should be in the future"
-        );
-
-        unlockTime = _unlockTime;
-        owner = payable(msg.sender);
+    constructor(ISwapRouter _swapRouter) {
+        swapRouter = _swapRouter;
     }
 
-    function withdraw() public {
-        // Uncomment this line, and the import of "hardhat/console.sol", to print a log in your terminal
-        // console.log("Unlock time is %o and block timestamp is %o", unlockTime, block.timestamp);
+    function swapTokensForToken(
+        address[] memory path,
+        uint256[] memory amounts,
+        //uint256 amountOutMin,
+        uint24[] memory fees,
+        address to
+    ) external {
+        require(path.length >= 2, "MultiTokenSwap: INVALID_PATH");
 
-        require(block.timestamp >= unlockTime, "You can't withdraw yet");
-        require(msg.sender == owner, "You aren't the owner");
+        TransferHelper.safeTransferFrom(
+            path[0],
+            msg.sender,
+            address(this),
+            amounts[0]
+        );
+        TransferHelper.safeApprove(path[0], address(swapRouter), amounts[0]);
 
-        emit Withdrawal(address(this).balance, block.timestamp);
+        address inputToken = path[0];
 
-        owner.transfer(address(this).balance);
+        for (uint i; i < path.length - 1; i++) {
+            ISwapRouter.ExactInputSingleParams memory params = ISwapRouter
+                .ExactInputSingleParams({
+                    tokenIn: inputToken,
+                    tokenOut: path[i + 1],
+                    fee: fees[i],
+                    recipient: address(this),
+                    deadline: block.timestamp + 120,
+                    amountIn: amounts[i],
+                    amountOutMinimum: 0,
+                    sqrtPriceLimitX96: 0
+                });
+
+            swapRouter.exactInputSingle(params);
+            inputToken = path[i + 1];
+        }
+
+        TransferHelper.safeTransfer(
+            inputToken,
+            to,
+            IERC20(inputToken).balanceOf(address(this))
+        );
     }
 }
