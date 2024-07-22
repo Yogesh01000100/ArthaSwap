@@ -1,5 +1,5 @@
 {
-  "name": "uniswap-project",
+  "name": "multiswap-project",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -14,5 +14,8 @@
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
     "ethers": "^6.13.1",
     "hardhat": "^2.22.6"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5"
   }
 }

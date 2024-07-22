@@ -8,18 +8,6 @@ const SwapComponent = ({ isConnected, onConnectClick }) => {
   ]);
   const [tokenOut, setTokenOut] = useState("USDC");
 
-  const handleTokenChange = (value, index) => {
-    const newTokens = [...tokensIn];
-    newTokens[index].token = value;
-    setTokensIn(newTokens);
-  };
-
-  const handleAmountChange = (value, index) => {
-    const newTokens = [...tokensIn];
-    newTokens[index].amount = value;
-    setTokensIn(newTokens);
-  };
-
   return (
     <div>
       <div className="max-w-md mx-auto mt-10 py-5 px-7 bg-gray-800 text-white rounded-lg shadow-xl">
