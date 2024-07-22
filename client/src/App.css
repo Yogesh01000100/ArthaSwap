@@ -1,5 +1,18 @@
 body {
-  background-color: #131313;
+  background-color: #191818;
   color: #CBD5E1; 
   font-family:Verdana, Geneva, Tahoma, sans-serif; 
+}
+
+@keyframes moveUpDown {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.arrow-animation {
+  animation: moveUpDown 1s ease-in-out infinite;
 }

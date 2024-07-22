@@ -1,29 +1,26 @@
-import React, { useState } from "react";
+import React from "react";
 import SwapComponent from "./components/SwapBox";
 import HeaderComponent from "./components/Header";
+import { WalletProvider } from "../src/contexts/useWallet";
+import { Toaster } from "sonner";
 import "./App.css";
 
 function App() {
-  const [isConnected, setIsConnected] = useState(false);
-  const [walletAddress, setWalletAddress] = useState("");
-
-  const toggleConnection = () => {
-    setIsConnected(!isConnected);
-    setWalletAddress(isConnected ? "" : "0xab...cd123");
-  };
-
   return (
-    <div className="App">
-      <HeaderComponent
-        isConnected={isConnected}
-        walletAddress={walletAddress}
-        onConnectClick={toggleConnection}
-      />
-      <SwapComponent
-        isConnected={isConnected}
-        onConnectClick={toggleConnection}
-      />
-    </div>
+    <WalletProvider>
+      <div className="App">
+      <Toaster
+          richColors
+          newestOnTop={true}
+          closeButton
+          headLess
+          expand={true}
+          position="bottom-left"
+        />
+        <HeaderComponent />
+        <SwapComponent />
+      </div>
+    </WalletProvider>
   );
 }
 
