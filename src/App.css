@@ -1,9 +1,3 @@
-body {
-  background-color: #191818;
-  color: #CBD5E1; 
-  font-family:Verdana, Geneva, Tahoma, sans-serif; 
-}
-
 @keyframes moveUpDown {
   0%, 100% {
     transform: translateY(0);
