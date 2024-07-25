@@ -16,14 +16,20 @@ import {
   StatNumber,
   StatGroup,
 } from "@chakra-ui/react";
-import ERC20ABI from '../contracts/abis/abi.json';
+import ERC20ABI from "../contracts/abis/abi.json";
 import { subscribeToPrice, unsubscribeFromPrice } from "../helpers/wsHelper";
 
 const SwapComponent = () => {
   const [tokensIn, setTokensIn] = useState([{ token: "WETH", amount: "" }]);
   const [tokenOut, setTokenOut] = useState("USDC");
-  const [balances, setBalances] = useState({ USDC: "", WETH: "", LINK: "" });
-  const [prices, setPrices] = useState({ USDC: 0, LINK: 0, ETH: 0 });
+
+  const [balances, setBalances] = useState({
+    USDC: "",
+    WETH: "",
+    LINK: "",
+    DAI: "",
+  });
+  const [prices, setPrices] = useState({ USDC: 0, LINK: 0, ETH: 0, DAI: 0 });
   const [loadingBalances, setLoadingBalances] = useState(true);
   const { connectWallet, isConnected, loading } = useWallet();
   const toast = useToast();
@@ -75,12 +81,18 @@ const SwapComponent = () => {
         ERC20ABI,
         signer
       );
-      const [usdcBalance, wethBalance, linkBalance, ethBalance] =
+      const daiContract = new ethers.Contract(
+        import.meta.env.VITE_DAI_ADDRESS,
+        ERC20ABI,
+        signer
+      );
+      const [usdcBalance, wethBalance, linkBalance, ethBalance, daiBalance] =
         await Promise.all([
           usdcContract.balanceOf(walletAddress),
           wethContract.balanceOf(walletAddress),
           linkContract.balanceOf(walletAddress),
           provider.getBalance(walletAddress),
+          daiContract.balanceOf(walletAddress),
         ]);
 
       setBalances({
@@ -88,6 +100,7 @@ const SwapComponent = () => {
         WETH: parseFloat(ethers.formatUnits(wethBalance, 18)).toFixed(4),
         LINK: parseFloat(ethers.formatUnits(linkBalance, 18)).toFixed(4),
         ETH: parseFloat(ethers.formatEther(ethBalance)).toFixed(4),
+        DAI: parseFloat(ethers.formatUnits(daiBalance, 18)).toFixed(4),
       });
       setLoadingBalances(false);
     } catch (error) {
@@ -122,7 +135,7 @@ const SwapComponent = () => {
 
   const getAvailableTokens = (index) => {
     const selectedTokens = tokensIn.map((token) => token.token);
-    const allTokens = ["WETH", "USDC", "LINK"];
+    const allTokens = ["WETH", "USDC", "LINK", "DAI"];
     return allTokens.filter(
       (token) =>
         !selectedTokens.includes(token) || token === tokensIn[index].token
@@ -131,7 +144,7 @@ const SwapComponent = () => {
 
   const getUnselectedTokens = () => {
     const selectedTokens = tokensIn.map((token) => token.token);
-    const allTokens = ["WETH", "USDC", "LINK"];
+    const allTokens = ["WETH", "USDC", "LINK", "DAI"];
     return allTokens.filter((token) => !selectedTokens.includes(token));
   };
 
@@ -195,7 +208,9 @@ const SwapComponent = () => {
                   <StatNumber>
                     {`$${(
                       balances[token.token] *
-                      prices[token.token === "WETH" ? "ETH" : token.token]
+                      (token.token === "DAI"
+                        ? prices["USDC"]
+                        : prices[token.token === "WETH" ? "ETH" : token.token])
                     ).toFixed(2)}` || "0"}
                   </StatNumber>
                 </Skeleton>
