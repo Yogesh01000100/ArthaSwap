@@ -16,6 +16,7 @@ import {
   StatNumber,
   StatGroup,
   useBreakpointValue,
+  CloseButton,
 } from "@chakra-ui/react";
 import ERC20ABI from "../contracts/abis/abi.json";
 import { subscribeToPrice, unsubscribeFromPrice } from "../utils/wsHelper";
@@ -142,8 +143,23 @@ const SwapComponent = () => {
 
   const addTokenInput = () => {
     if (tokensIn.length < 2) {
-      setTokensIn([...tokensIn, { token: "", amount: "" }]);
+      const allTokens = ["WETH", "USDC", "LINK", "DAI"];
+      const currentTokens = tokensIn.map((token) => token.token);
+      let nextTokenIndex = allTokens.findIndex(
+        (token) => !currentTokens.includes(token)
+      );
+      if (nextTokenIndex === -1) {
+        nextTokenIndex = 0;
+      }
+
+      const newToken = { token: allTokens[nextTokenIndex], amount: "" };
+      setTokensIn([...tokensIn, newToken]);
     }
+  };
+
+  const removeTokenInput = (index) => {
+    const updatedTokens = tokensIn.filter((_, i) => i !== index);
+    setTokensIn(updatedTokens);
   };
 
   const getAvailableTokens = (index) => {
@@ -168,6 +184,9 @@ const SwapComponent = () => {
         description: "Please enter the token amounts.",
         status: "error",
         duration: 3000,
+        isClosable: true,
+        variant: "subtle",
+        position: "top",
       });
       return;
     }
@@ -239,7 +258,17 @@ const SwapComponent = () => {
           border="1px"
           borderColor="gray.600"
           mx="auto"
+          position="relative"
         >
+          {tokensIn.length > 1 && (
+            <CloseButton
+              position="absolute"
+              right="1"
+              top="1"
+              color="gray.500"
+              onClick={() => removeTokenInput(index)}
+            />
+          )}
           <Box
             bg="blue.700"
             rounded="lg"
@@ -261,9 +290,7 @@ const SwapComponent = () => {
                   rounded="md"
                   width="max-content"
                 >
-                  <StatNumber>
-                    {balances[token.token] || "0.0"}
-                  </StatNumber>
+                  <StatNumber>{balances[token.token] || "0.0"}</StatNumber>
                 </Skeleton>
               </Stat>
               <Stat>
@@ -312,7 +339,7 @@ const SwapComponent = () => {
               color="white"
               flex="1"
               _placeholder={{ color: "gray.500" }}
-              fontSize={["sm", "md"]}
+              fontSize={["sm", "xl"]}
               rounded="xl"
             />
           </HStack>
