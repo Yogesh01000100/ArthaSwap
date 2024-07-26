@@ -19,7 +19,10 @@ import {
 import ERC20ABI from "../contracts/abis/abi.json";
 import { subscribeToPrice, unsubscribeFromPrice } from "../utils/wsHelper";
 import { WETH, USDC, DAI, LINK } from "../constants/tokens";
-import { executeSingleTokenSwap } from "../utils/swapUtil";
+import {
+  executeSingleTokenSwap,
+  executeMultihopTokenSwap,
+} from "../utils/swapUtil";
 
 const SwapComponent = () => {
   const [tokensIn, setTokensIn] = useState([{ token: "WETH", amount: "" }]);
@@ -160,9 +163,40 @@ const SwapComponent = () => {
   };
 
   const performSwap = async () => {
+    if (tokensIn.length === 0 || tokensIn.some((token) => !token.amount)) {
+      toast({
+        title: "Missing Information",
+        description: "Please enter the token amounts.",
+        status: "error",
+        duration: 3000,
+      });
+      return;
+    }
     setIsSwapping(true);
+
     try {
-      const receipt = await executeSingleTokenSwap("50", DAI, WETH);
+      let receipt;
+      if (tokensIn.length > 1) {
+        const pathTokens = tokensIn.map((token) => tokenDetails[token.token]);
+        const amountIn = tokensIn[0].amount;
+        console.log(pathTokens);
+        receipt = await executeMultihopTokenSwap(
+          pathTokens[0],
+          pathTokens[1],
+          tokenDetails[tokenOut],
+          amountIn.toString()
+        );
+      } else {
+        const amountIn = tokensIn[0].amount;
+        const tokenInDetails = tokenDetails[tokensIn[0].token];
+        const tokenOutDetails = tokenDetails[tokenOut];
+
+        receipt = await executeSingleTokenSwap(
+          amountIn,
+          tokenInDetails,
+          tokenOutDetails
+        );
+      }
       toast({
         title: "Swap successful",
         description: `Transaction hash: ${formatHash(receipt.hash)}`,
@@ -364,7 +398,11 @@ const SwapComponent = () => {
           rounded="xl"
           size="md"
         >
-          {isConnected && !isSwapping ? "Swap" : "Connect Wallet"}
+          {isConnected && !isSwapping
+            ? tokensIn.length > 1
+              ? "Multi-hop Swap"
+              : "Swap"
+            : "Connect Wallet"}
         </Button>
       </Flex>
     </Box>
