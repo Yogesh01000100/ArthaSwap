@@ -4,6 +4,7 @@ import QUOTER_ABI from "./abis/quoter.json" assert { type: "json" };
 import SWAP_ROUTER_ABI from "./abis/swaprouter.json" assert { type: "json" };
 import POOL_ABI from "./abis/pool.json" assert { type: "json" };
 import TOKEN_IN_ABI from "./abis/weth.json" assert { type: "json" };
+import { WETH, USDC } from '../constants/tokens';
 import "dotenv/config";
 
 const V3_FACTORY_ADDRESS = import.meta.env.VITE_V3_FACTORY_ADDRESS;
@@ -24,28 +25,6 @@ const quoterContract = new ethers.Contract(
   provider
 );
 const signer = new ethers.Wallet(import.meta.env.PRIVATE_KEY, provider);
-
-const WETH = {
-  chainId: 11155111,
-  address: import.meta.env.VITE_WETH_ADDRESS,
-  decimals: 18,
-  symbol: "WETH",
-  name: "Wrapped Ether",
-  isToken: true,
-  isNative: true,
-  wrapped: true,
-};
-
-const USDC = {
-  chainId: 11155111,
-  address: import.meta.env.VITE_USDC_ADDRESS,
-  decimals: 6,
-  symbol: "USDC",
-  name: "USD//C",
-  isToken: true,
-  isNative: true,
-  wrapped: false,
-};
 
 async function approveToken(tokenAddress, tokenABI, amount, wallet) {
   try {

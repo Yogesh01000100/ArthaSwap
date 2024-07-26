@@ -17,12 +17,16 @@ import {
   StatGroup,
 } from "@chakra-ui/react";
 import ERC20ABI from "../contracts/abis/abi.json";
-import { subscribeToPrice, unsubscribeFromPrice } from "../helpers/wsHelper";
+import { subscribeToPrice, unsubscribeFromPrice } from "../utils/wsHelper";
+import { WETH, USDC, DAI, LINK } from "../constants/tokens";
+import { executeSingleTokenSwap } from "../utils/swapUtil";
 
 const SwapComponent = () => {
   const [tokensIn, setTokensIn] = useState([{ token: "WETH", amount: "" }]);
   const [tokenOut, setTokenOut] = useState("USDC");
-
+  const [isSwapping, setIsSwapping] = useState(false);
+  const [tokenOutAmount, setTokenOutAmount] = useState("");
+  const tokenDetails = { WETH, USDC, DAI, LINK };
   const [balances, setBalances] = useState({
     USDC: "",
     WETH: "",
@@ -115,6 +119,10 @@ const SwapComponent = () => {
     }
   };
 
+  const handleTokenOutAmountChange = (value) => {
+    setTokenOutAmount(value);
+  };
+
   const handleTokenChange = (value, index) => {
     const newTokensIn = [...tokensIn];
     newTokensIn[index].token = value;
@@ -146,6 +154,32 @@ const SwapComponent = () => {
     const selectedTokens = tokensIn.map((token) => token.token);
     const allTokens = ["WETH", "USDC", "LINK", "DAI"];
     return allTokens.filter((token) => !selectedTokens.includes(token));
+  };
+  const formatHash = (hash) => {
+    return `${hash.slice(0, 12)}...${hash.slice(-6)}`;
+  };
+
+  const performSwap = async () => {
+    setIsSwapping(true);
+    try {
+      const receipt = await executeSingleTokenSwap("50", DAI, WETH);
+      toast({
+        title: "Swap successful",
+        description: `Transaction hash: ${formatHash(receipt.hash)}`,
+        status: "success",
+        duration: 4000,
+      });
+    } catch (error) {
+      console.error("Swap failed:", error);
+      toast({
+        title: "Swap failed",
+        description: error.message,
+        status: "error",
+        duration: 5000,
+      });
+    } finally {
+      setIsSwapping(false);
+    }
   };
 
   return (
@@ -301,8 +335,8 @@ const SwapComponent = () => {
             borderColor="transparent"
             bg="gray.700"
             color="white"
-            value={tokensIn[0].amount}
-            onChange={(e) => handleAmountChange(e.target.value, 0)}
+            value={tokenOutAmount}
+            onChange={(e) => handleTokenOutAmountChange(e.target.value, 0)}
             _placeholder={{ color: "gray.500" }}
             fontSize="xl"
             rounded="xl"
@@ -317,22 +351,20 @@ const SwapComponent = () => {
           px="5"
           color="white"
           _hover={{ bg: "pink.400" }}
-          onClick={
-            isConnected
-              ? () => toast({ title: "Swapping...", status: "info" })
-              : connectWallet
-          }
-          isLoading={loading}
-          loadingText="Connecting"
+          onClick={() => {
+            if (!isConnected) {
+              connectWallet();
+            } else {
+              performSwap();
+            }
+          }}
+          isLoading={loading || isSwapping}
+          loadingText={isSwapping ? "Swapping..." : "Connecting"}
           colorScheme="pink"
           rounded="xl"
           size="md"
         >
-          {isConnected
-            ? tokensIn.length == 2
-              ? "MultiHop Swap"
-              : "Swap"
-            : "Connect To"}
+          {isConnected && !isSwapping ? "Swap" : "Connect Wallet"}
         </Button>
       </Flex>
     </Box>

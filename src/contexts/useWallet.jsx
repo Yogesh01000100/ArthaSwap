@@ -10,6 +10,7 @@ const ETH_SEPOLIA_RPC = 'https://rpc.sepolia.org';
 export const WalletProvider = ({ children }) => {
   const [isConnected, setIsConnected] = useState(false);
   const [walletAddress, setWalletAddress] = useState('');
+  const [signer, setSigner]=useState(null);
   const [loading, setLoading] = useState(false);
   const toast = useToast();
 
@@ -81,6 +82,7 @@ export const WalletProvider = ({ children }) => {
 
         const signer = await provider.getSigner();
         const address = await signer.getAddress();
+        setSigner(signer);
         setWalletAddress(address);
         sessionStorage.setItem('walletAddress', address);
         setIsConnected(true);
@@ -137,7 +139,7 @@ export const WalletProvider = ({ children }) => {
   }, []);
 
   return (
-    <WalletContext.Provider value={{ connectWallet, isConnected, walletAddress, loading }}>
+    <WalletContext.Provider value={{ connectWallet, isConnected, walletAddress, loading, signer }}>
       {children}
     </WalletContext.Provider>
   );

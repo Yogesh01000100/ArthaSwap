@@ -1,6 +1,7 @@
 import { ethers } from "ethers";
 import SWAP_ROUTER_ABI from "./abis/swaprouter.json" assert { type: "json" };
 import TOKEN_IN_ABI from "./abis/weth.json" assert { type: "json" };
+import { WETH, USDC, DAI } from '../constants/tokens';
 import "dotenv/config";
 
 const SWAP_ROUTER_CONTRACT_ADDRESS = import.meta.env.VITE_SWAP_ROUTER_CONTRACT_ADDRESS;
@@ -10,39 +11,6 @@ const provider = new ethers.JsonRpcProvider(
 );
 const signer = new ethers.Wallet(import.meta.env.VITE_PRIVATE_KEY, provider);
 const FEE_SIZE = 3;
-
-const WETH = {
-  chainId: 11155111,
-  address: import.meta.env.VITE_WETH_ADDRESS,
-  decimals: 18,
-  symbol: "WETH",
-  name: "Wrapped Ether",
-  isToken: true,
-  isNative: true,
-  wrapped: true,
-};
-
-const USDC = {
-  chainId: 11155111,
-  address: import.meta.env.VITE_USDC_ADDRESS,
-  decimals: 6,
-  symbol: "USDC",
-  name: "USD//C",
-  isToken: true,
-  isNative: true,
-  wrapped: false,
-};
-
-const DAI = {
-  chainId: 11155111,
-  address:  import.meta.env.VITE_DAI_ADDRESS,
-  decimals: 18,
-  symbol: "DAI",
-  name: "DAI",
-  isToken: true,
-  isNative: false,
-  wrapped: false,
-};
 
 async function approveToken(tokenAddress, tokenABI, amount, wallet) {
   try {

@@ -15,7 +15,7 @@ const HeaderComponent = () => {
         <Flex align="center" gap="5">
           <Link href="/home" display="flex" _hover={{ color: 'gray.300' }} alignItems="center">
             <Image src="/src/assets/switch.png" alt="Logo" boxSize="6" mr="2" />
-            Multiswap
+            ArthaSwap
           </Link>
           <Link href="#" _hover={{ color: 'gray.300' }}>Trade</Link>
           <Link href="#" _hover={{ color: 'gray.300' }}>Explore</Link>
