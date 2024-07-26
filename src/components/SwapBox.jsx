@@ -117,6 +117,9 @@ const SwapComponent = () => {
         status: "error",
         duration: 2500,
         isClosable: true,
+        variant: 'subtle',
+        isClosable: true,
+        position: "top"
       });
       setLoadingBalances(false);
     }
@@ -169,6 +172,9 @@ const SwapComponent = () => {
         description: "Please enter the token amounts.",
         status: "error",
         duration: 3000,
+        variant: 'subtle',
+        isClosable: true,
+        position: "top"
       });
       return;
     }
@@ -202,6 +208,9 @@ const SwapComponent = () => {
         description: `Transaction hash: ${formatHash(receipt.hash)}`,
         status: "success",
         duration: 4000,
+        variant: 'subtle',
+        position: "top",
+        isClosable: true
       });
     } catch (error) {
       console.error("Swap failed:", error);
@@ -210,6 +219,9 @@ const SwapComponent = () => {
         description: error.message,
         status: "error",
         duration: 5000,
+        variant: 'subtle',
+        position: "top",
+        isClosable: true,
       });
     } finally {
       setIsSwapping(false);

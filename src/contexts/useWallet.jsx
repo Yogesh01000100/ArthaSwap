@@ -53,6 +53,8 @@ export const WalletProvider = ({ children }) => {
                   status: 'success',
                   duration: 4000,
                   isClosable: true,
+                  variant: 'subtle',
+                  position: "top"
                 });
               } catch (addError) {
                 console.error('Failed to add network:', addError);
@@ -61,6 +63,7 @@ export const WalletProvider = ({ children }) => {
                   description: 'Failed to add Sepolia network',
                   status: 'error',
                   duration: 5000,
+                  position: "top",
                   isClosable: true,
                 });
                 return;
@@ -73,6 +76,8 @@ export const WalletProvider = ({ children }) => {
                 status: 'error',
                 duration: 5000,
                 isClosable: true,
+                variant: 'subtle',
+                position: "top"
               });
               return;
             }
@@ -89,7 +94,9 @@ export const WalletProvider = ({ children }) => {
           description: 'Wallet connected successfully',
           status: 'success',
           duration: 5000,
+          variant: 'subtle',
           isClosable: true,
+          position: "top"
         });
       } else {
         toast({
@@ -98,6 +105,8 @@ export const WalletProvider = ({ children }) => {
           status: 'error',
           duration: 5000,
           isClosable: true,
+          variant: 'subtle',
+          position: "top"
         });
       }
     } catch (error) {
@@ -108,6 +117,8 @@ export const WalletProvider = ({ children }) => {
         status: 'error',
         duration: 5000,
         isClosable: true,
+        variant: 'subtle',
+        position: "top"
       });
       setIsConnected(false);
     } finally {
