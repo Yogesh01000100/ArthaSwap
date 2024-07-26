@@ -34,7 +34,7 @@ const HeaderComponent = () => {
             alignItems="center"
           >
             <Image
-              src="/src/assets/switch.png"
+              src="/switch.png"
               alt="Logo"
               boxSize={["6", "6"]}
               mr={["0", "2"]}
@@ -65,7 +65,7 @@ const HeaderComponent = () => {
                 Sepolia Testnet
               </Badge>
               <Image
-                src="/src/assets/eth.png"
+                src="/eth.png"
                 alt="Logo"
                 boxSize={["6", "8"]}
               />
