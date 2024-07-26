@@ -1,6 +1,5 @@
 import { ethers } from "ethers";
 import V3FactoryAbi from "./abis/factory.json" assert { type: "json" };
-import "dotenv/config";
 
 const V3_FACTORY_ADDRESS = import.meta.env.VITE_V3_FACTORY_ADDRESS;
 
