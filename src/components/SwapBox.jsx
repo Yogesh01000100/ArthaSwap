@@ -216,13 +216,16 @@ const SwapComponent = () => {
       await loadBalances();
       toast({
         title: "Swap successful",
-        description: `Transaction hash: ${receipt.hash.slice(0, 9)}......${receipt.hash.slice(-6)}`,
+        description: `Transaction hash: ${receipt.hash.slice(
+          0,
+          9
+        )}......${receipt.hash.slice(-6)}`,
         status: "success",
         duration: 4000,
         isClosable: true,
         variant: "subtle",
         position: "top",
-      });      
+      });
     } catch (error) {
       console.error("Swap failed:", error);
       toast({
@@ -412,10 +415,6 @@ const SwapComponent = () => {
 
       <Flex justifyContent="center" mt="4" mb="1">
         <Button
-          bg="pink.500"
-          px="5"
-          color="white"
-          _hover={{ bg: "pink.400" }}
           onClick={() => {
             if (!isConnected) {
               connectWallet();
@@ -426,14 +425,15 @@ const SwapComponent = () => {
           isLoading={loading || isSwapping}
           loadingText={isSwapping ? "Swapping..." : "Connecting"}
           colorScheme="pink"
-          rounded="xl"
+          rounded="2xl"
           size="md"
+          px="9"
+          textColor="white"
+          isDisabled={!isConnected}
+          bg={!isConnected ? "pink.500" : "pink.500"}
+          _hover={{ bg: !isConnected ? "pink.400" : "pink.500" }}
         >
-          {isConnected && !isSwapping
-            ? tokensIn.length > 1
-              ? "Multi-hop Swap"
-              : "Swap"
-            : "Connect Wallet"}
+          {tokensIn.length > 1 ? "Multi-hop Swap" : "Swap"}
         </Button>
       </Flex>
     </Box>

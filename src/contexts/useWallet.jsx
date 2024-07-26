@@ -8,10 +8,15 @@ const ETH_SEPOLIA_CHAIN_ID = '0xaa36a7'; // Hexadecimal -> 11155111
 const ETH_SEPOLIA_RPC = 'https://rpc.sepolia.org';
 
 export const WalletProvider = ({ children }) => {
-  const [isConnected, setIsConnected] = useState(false);
-  const [walletAddress, setWalletAddress] = useState('');
+  const [isConnected, setIsConnected] = useState(sessionStorage.getItem('isConnected') === 'true');
+  const [walletAddress, setWalletAddress] = useState(sessionStorage.getItem('walletAddress') || '');
   const [loading, setLoading] = useState(false);
   const toast = useToast();
+
+  useEffect(() => {
+    sessionStorage.setItem('isConnected', isConnected);
+    sessionStorage.setItem('walletAddress', walletAddress);
+  }, [isConnected, walletAddress]);
 
   const connectWallet = async () => {
     try {
@@ -19,7 +24,7 @@ export const WalletProvider = ({ children }) => {
       if (window.ethereum) {
         const provider = new ethers.BrowserProvider(window.ethereum);
         const network = await provider.getNetwork();
-        
+
         const ethSepoliaChainId = BigInt(ETH_SEPOLIA_CHAIN_ID);
 
         if (network.chainId !== ethSepoliaChainId) {
@@ -47,38 +52,12 @@ export const WalletProvider = ({ children }) => {
                     blockExplorerUrls: ['https://sepolia.etherscan.io/'],
                   }],
                 });
-                toast({
-                  title: 'Network Switched',
-                  description: 'Switched to Ethereum Sepolia Testnet',
-                  status: 'success',
-                  duration: 4000,
-                  isClosable: true,
-                  variant: 'subtle',
-                  position: "top"
-                });
               } catch (addError) {
                 console.error('Failed to add network:', addError);
-                toast({
-                  title: 'Network Addition Failed',
-                  description: 'Failed to add Sepolia network',
-                  status: 'error',
-                  duration: 5000,
-                  position: "top",
-                  isClosable: true,
-                });
                 return;
               }
             } else {
               console.error('Failed to switch network:', switchError);
-              toast({
-                title: 'Network Switch Failed',
-                description: 'Failed to switch to Sepolia network',
-                status: 'error',
-                duration: 5000,
-                isClosable: true,
-                variant: 'subtle',
-                position: "top"
-              });
               return;
             }
           }
@@ -86,16 +65,15 @@ export const WalletProvider = ({ children }) => {
 
         const signer = await provider.getSigner();
         const address = await signer.getAddress();
-        setWalletAddress(address);
-        sessionStorage.setItem('walletAddress', address);
         setIsConnected(true);
+        setWalletAddress(address);
         toast({
           title: 'Wallet Connected',
           description: 'Wallet connected successfully',
           status: 'success',
           duration: 5000,
-          variant: 'subtle',
           isClosable: true,
+          variant: 'subtle',
           position: "top"
         });
       } else {
@@ -103,9 +81,9 @@ export const WalletProvider = ({ children }) => {
           title: 'MetaMask Not Found',
           description: 'Please install MetaMask!',
           status: 'error',
-          duration: 5000,
           isClosable: true,
           variant: 'subtle',
+          duration: 5000,
           position: "top"
         });
       }
@@ -120,32 +98,10 @@ export const WalletProvider = ({ children }) => {
         variant: 'subtle',
         position: "top"
       });
-      setIsConnected(false);
     } finally {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    const storedAddress = sessionStorage.getItem('walletAddress');
-    if (storedAddress) {
-      setWalletAddress(storedAddress);
-      setIsConnected(true);
-    }
-    if (window.ethereum) {
-      window.ethereum.on('accountsChanged', (accounts) => {
-        if (accounts.length > 0) {
-          setWalletAddress(accounts[0]);
-          sessionStorage.setItem('walletAddress', accounts[0]);
-          setIsConnected(true);
-        } else {
-          setIsConnected(false);
-          setWalletAddress('');
-          sessionStorage.removeItem('walletAddress');
-        }
-      });
-    }
-  }, []);
 
   return (
     <WalletContext.Provider value={{ connectWallet, isConnected, walletAddress, loading }}>
