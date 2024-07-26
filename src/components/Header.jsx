@@ -8,6 +8,7 @@ import {
   Badge,
   Stack,
   Flex,
+  Text,
   useBreakpointValue,
 } from "@chakra-ui/react";
 
@@ -28,16 +29,17 @@ const HeaderComponent = () => {
           <Link
             href="/home"
             display="flex"
+            mr="5"
             _hover={{ color: "gray.300" }}
             alignItems="center"
           >
             <Image
               src="/src/assets/switch.png"
               alt="Logo"
-              boxSize={["4", "6"]}
-              mr="2"
+              boxSize={["6", "6"]}
+              mr={["0", "2"]}
             />
-            ArthaSwap
+            <Text display={["none", "block"]}>ArthaSwap</Text>
           </Link>
           <Link
             href="https://staging.aave.com/faucet/"

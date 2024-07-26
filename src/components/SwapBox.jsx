@@ -325,7 +325,7 @@ const SwapComponent = () => {
             rounded="xl"
             bg="blue.600"
             _hover={{ bg: "blue.500" }}
-            width={["full", "50%"]}
+            width={["90%", "50%"]}
             size="md"
           >
             Add Token
