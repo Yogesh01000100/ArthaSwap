@@ -3,14 +3,10 @@
     transform: translateY(1);
   }
   40% {
-    transform: translateY(-2px);
+    transform: translateY(-4px);
   }
 }
 
 .arrow-animation {
   animation: moveUpDown 2s ease-in-out infinite;
-}
-
-.arrow-animation-card {
-  animation: moveUpDown 3s ease-in-out infinite;
 }

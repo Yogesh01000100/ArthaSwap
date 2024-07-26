@@ -1,13 +1,14 @@
 import { useWallet } from "../contexts/useWallet";
 import {
-  Flex,
+  Box,
   Button,
   Image,
-  Box,
   Link,
   Spinner,
-  Text,
-  Badge
+  Badge,
+  Stack,
+  Flex,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 
 const HeaderComponent = () => {
@@ -18,17 +19,24 @@ const HeaderComponent = () => {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
   };
 
+  const stackDirection = useBreakpointValue({ base: "column", md: "row" });
+
   return (
-    <Box bg="gray.800" p="4" color="white">
+    <Box bg="gray.800" p={[2, 4]} color="white">
       <Flex align="center" justify="space-between" maxW="1200px" mx="auto">
-        <Flex align="center" gap="5">
+        <Stack direction={stackDirection} align="center" spacing={5}>
           <Link
             href="/home"
             display="flex"
             _hover={{ color: "gray.300" }}
             alignItems="center"
           >
-            <Image src="/src/assets/switch.png" alt="Logo" boxSize="6" mr="2" />
+            <Image
+              src="/src/assets/switch.png"
+              alt="Logo"
+              boxSize={["4", "6"]}
+              mr="2"
+            />
             ArthaSwap
           </Link>
           <Link
@@ -46,21 +54,20 @@ const HeaderComponent = () => {
           <Link href="#" _hover={{ color: "gray.300" }}>
             Explore
           </Link>
-        </Flex>
+        </Stack>
 
-        <Flex align="center">
+        <Stack direction={stackDirection} align="center" spacing="4">
           {isConnected && (
-            <Flex align="center">
-              <Badge rounded="md" px="3" py="1">Sepolia Testnet</Badge>
+            <Stack direction="row" align="center" spacing="2">
+              <Badge rounded="md" px="3" py="1">
+                Sepolia Testnet
+              </Badge>
               <Image
-                className="arrow-animation"
                 src="/src/assets/eth.png"
                 alt="Logo"
-                boxSize="8"
-                mr="4"
-                ml="2"
+                boxSize={["6", "8"]}
               />
-            </Flex>
+            </Stack>
           )}
           <Button
             onClick={connectWallet}
@@ -79,7 +86,7 @@ const HeaderComponent = () => {
               ? truncateAddress(walletAddress)
               : "Connect"}
           </Button>
-        </Flex>
+        </Stack>
       </Flex>
     </Box>
   );

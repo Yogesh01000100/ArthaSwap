@@ -15,6 +15,7 @@ import {
   StatLabel,
   StatNumber,
   StatGroup,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import ERC20ABI from "../contracts/abis/abi.json";
 import { subscribeToPrice, unsubscribeFromPrice } from "../utils/wsHelper";
@@ -40,6 +41,7 @@ const SwapComponent = () => {
   const [loadingBalances, setLoadingBalances] = useState(true);
   const { connectWallet, isConnected, loading } = useWallet();
   const toast = useToast();
+  const inputSize = useBreakpointValue({ base: "sm", md: "md" });
 
   useEffect(() => {
     if (isConnected) {
@@ -117,9 +119,6 @@ const SwapComponent = () => {
         status: "error",
         duration: 2500,
         isClosable: true,
-        variant: 'subtle',
-        isClosable: true,
-        position: "top"
       });
       setLoadingBalances(false);
     }
@@ -161,9 +160,6 @@ const SwapComponent = () => {
     const allTokens = ["WETH", "USDC", "LINK", "DAI"];
     return allTokens.filter((token) => !selectedTokens.includes(token));
   };
-  const formatHash = (hash) => {
-    return `${hash.slice(0, 12)}...${hash.slice(-6)}`;
-  };
 
   const performSwap = async () => {
     if (tokensIn.length === 0 || tokensIn.some((token) => !token.amount)) {
@@ -172,9 +168,6 @@ const SwapComponent = () => {
         description: "Please enter the token amounts.",
         status: "error",
         duration: 3000,
-        variant: 'subtle',
-        isClosable: true,
-        position: "top"
       });
       return;
     }
@@ -185,7 +178,6 @@ const SwapComponent = () => {
       if (tokensIn.length > 1) {
         const pathTokens = tokensIn.map((token) => tokenDetails[token.token]);
         const amountIn = tokensIn[0].amount;
-        console.log(pathTokens);
         receipt = await executeMultihopTokenSwap(
           pathTokens[0],
           pathTokens[1],
@@ -205,12 +197,9 @@ const SwapComponent = () => {
       }
       toast({
         title: "Swap successful",
-        description: `Transaction hash: ${formatHash(receipt.hash)}`,
+        description: `Transaction hash: ${receipt.hash}`,
         status: "success",
         duration: 4000,
-        variant: 'subtle',
-        position: "top",
-        isClosable: true
       });
     } catch (error) {
       console.error("Swap failed:", error);
@@ -219,9 +208,6 @@ const SwapComponent = () => {
         description: error.message,
         status: "error",
         duration: 5000,
-        variant: 'subtle',
-        position: "top",
-        isClosable: true,
       });
     } finally {
       setIsSwapping(false);
@@ -230,11 +216,11 @@ const SwapComponent = () => {
 
   return (
     <Box
-      maxW="md"
+      maxW={["92%", "md"]}
       mx="auto"
-      mt="10"
-      px={1}
-      py={9}
+      mt={["4", "10"]}
+      p={["2", "4"]}
+      py="3"
       bg="gray.700"
       color="white"
       rounded="xl"
@@ -252,7 +238,7 @@ const SwapComponent = () => {
           shadow="md"
           border="1px"
           borderColor="gray.600"
-          mx={4}
+          mx="auto"
         >
           <Box
             bg="blue.700"
@@ -261,28 +247,30 @@ const SwapComponent = () => {
             display="inline-block"
             color="white"
             size="sm"
-            mb={2}
+            mb="2"
           >
-            <Text fontSize="sm">{token.token}</Text>
+            <Text fontSize={["xs", "sm"]}>{token.token}</Text>
           </Box>
 
           {isConnected && (
-            <StatGroup mb={2}>
+            <StatGroup mb="2">
               <Stat>
                 <StatLabel>Balance</StatLabel>
                 <Skeleton
                   isLoaded={!loadingBalances}
-                  rounded={6}
+                  rounded="md"
                   width="max-content"
                 >
-                  <StatNumber>{balances[token.token] || "0.0"}</StatNumber>
+                  <StatNumber>
+                    {balances[token.token] || "0.0"}
+                  </StatNumber>
                 </Skeleton>
               </Stat>
               <Stat>
                 <StatLabel>Price</StatLabel>
                 <Skeleton
                   isLoaded={!loadingBalances}
-                  rounded={6}
+                  rounded="md"
                   width="max-content"
                 >
                   <StatNumber>
@@ -298,7 +286,7 @@ const SwapComponent = () => {
             </StatGroup>
           )}
 
-          <HStack>
+          <HStack spacing={3}>
             <Select
               value={token.token}
               onChange={(e) => handleTokenChange(e.target.value, index)}
@@ -324,9 +312,8 @@ const SwapComponent = () => {
               color="white"
               flex="1"
               _placeholder={{ color: "gray.500" }}
-              fontSize="xl"
+              fontSize={["sm", "md"]}
               rounded="xl"
-              mx={8}
             />
           </HStack>
         </Box>
@@ -338,7 +325,7 @@ const SwapComponent = () => {
             rounded="xl"
             bg="blue.600"
             _hover={{ bg: "blue.500" }}
-            width="50%"
+            width={["full", "50%"]}
             size="md"
           >
             Add Token
@@ -355,7 +342,7 @@ const SwapComponent = () => {
         borderColor="gray.600"
         mx={4}
       >
-        <Text mb="2" fontSize="lg">
+        <Text mb="2" fontSize={["md", "lg"]}>
           Buy Token :
         </Text>
         <HStack>
@@ -382,16 +369,15 @@ const SwapComponent = () => {
             bg="gray.700"
             color="white"
             value={tokenOutAmount}
-            onChange={(e) => handleTokenOutAmountChange(e.target.value, 0)}
+            onChange={(e) => handleTokenOutAmountChange(e.target.value)}
             _placeholder={{ color: "gray.500" }}
-            fontSize="xl"
+            fontSize={["sm", "xl"]}
             rounded="xl"
-            mx={8}
           />
         </HStack>
       </Box>
 
-      <Flex justifyContent="center" mt="4">
+      <Flex justifyContent="center" mt="4" mb="1">
         <Button
           bg="pink.500"
           px="5"

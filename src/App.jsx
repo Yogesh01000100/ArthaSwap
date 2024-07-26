@@ -12,7 +12,7 @@ function App() {
         <HeaderComponent />
         <SwapComponent />
       </VStack>
-      <Box className='arrow-animation-card' position="fixed" bottom="0" left="0" m={4}>
+      <Box position="fixed" bottom="0" left="0" m={4}>
         <LiquidityWarningCard />
       </Box>
     </WalletProvider>
