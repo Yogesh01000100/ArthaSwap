@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import { useWallet } from "../contexts/useWallet";
 import {
@@ -15,7 +15,6 @@ import {
   StatLabel,
   StatNumber,
   StatGroup,
-  useBreakpointValue,
   CloseButton,
 } from "@chakra-ui/react";
 import ERC20ABI from "../contracts/abis/abi.json";
@@ -42,7 +41,6 @@ const SwapComponent = () => {
   const [loadingBalances, setLoadingBalances] = useState(true);
   const { connectWallet, isConnected, loading } = useWallet();
   const toast = useToast();
-  const inputSize = useBreakpointValue({ base: "sm", md: "md" });
 
   useEffect(() => {
     if (isConnected) {
@@ -116,10 +114,11 @@ const SwapComponent = () => {
     } catch (error) {
       toast({
         title: "Error loading balances",
-        description: error.message,
         status: "error",
         duration: 2500,
         isClosable: true,
+        variant: "subtle",
+        position: "top",
       });
       setLoadingBalances(false);
     }
@@ -216,10 +215,13 @@ const SwapComponent = () => {
       }
       toast({
         title: "Swap successful",
-        description: `Transaction hash: ${receipt.hash}`,
+        description: `Transaction hash: ${receipt.hash.slice(0, 9)}......${receipt.hash.slice(-6)}`,
         status: "success",
         duration: 4000,
-      });
+        isClosable: true,
+        variant: "subtle",
+        position: "top",
+      });      
     } catch (error) {
       console.error("Swap failed:", error);
       toast({
@@ -227,6 +229,9 @@ const SwapComponent = () => {
         description: error.message,
         status: "error",
         duration: 5000,
+        isClosable: true,
+        variant: "subtle",
+        position: "top",
       });
     } finally {
       setIsSwapping(false);
