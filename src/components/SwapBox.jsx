@@ -213,6 +213,7 @@ const SwapComponent = () => {
           tokenOutDetails
         );
       }
+      await loadBalances();
       toast({
         title: "Swap successful",
         description: `Transaction hash: ${receipt.hash.slice(0, 9)}......${receipt.hash.slice(-6)}`,
