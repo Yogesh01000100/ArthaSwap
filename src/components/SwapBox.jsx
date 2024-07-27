@@ -183,8 +183,14 @@ const SwapComponent = () => {
     const unselectedTokens = getUnselectedTokens();
     if (unselectedTokens.length > 0) {
       setTokenOut(unselectedTokens[0]);
+    } else {
+      setTokenOut("");
     }
   };
+
+  useEffect(() => {
+    updateTokenOut();
+  }, [tokensIn]);
 
   const performSwap = async () => {
     if (tokensIn.length === 0) {
@@ -224,6 +230,12 @@ const SwapComponent = () => {
         );
       }
       await loadBalances();
+      const resetTokensIn = tokensIn.map(token => ({
+        ...token,
+        amount: "0.0"
+      }));
+      setTokensIn(resetTokensIn);
+      setTokenOutAmount("0.0");
       toast({
         title: "Swap successful",
         description: `Transaction hash: ${receipt.hash.slice(
@@ -269,14 +281,14 @@ const SwapComponent = () => {
       {tokensIn.map((token, index) => (
         <Box
           key={index}
-          mb="4"
-          p="6"
+          mb="3"
+          p="5"
           bg="gray.800"
           rounded="xl"
           shadow="md"
           border="1px"
           borderColor="blue.600"
-          mx="auto"
+          mx={2}
           position="relative"
         >
           {tokensIn.length > 1 && (
@@ -284,12 +296,12 @@ const SwapComponent = () => {
               position="absolute"
               right="1"
               top="1"
-              color="gray.500"
+              color="gray.400"
               onClick={() => removeTokenInput(index)}
             />
           )}
           <Box
-            bg="blue.700"
+            bg="blue.500"
             rounded="lg"
             px="2"
             display="inline-block"
@@ -353,13 +365,14 @@ const SwapComponent = () => {
               placeholder="0.0"
               value={token.amount}
               onChange={(e) => handleAmountChange(e.target.value, index)}
-              borderColor="transparent"
               bg="gray.700"
               color="white"
-              flex="1"
+              flex="2"
               _placeholder={{ color: "gray.500" }}
               fontSize={["sm", "xl"]}
               rounded="xl"
+              border="1px"
+              borderColor="blue.600"
             />
           </HStack>
         </Box>
@@ -369,8 +382,8 @@ const SwapComponent = () => {
           <Button
             onClick={addTokenInput}
             rounded="2xl"
-            bg="pink.600"
-            _hover={{ bg: "pink.500" }}
+            bg="blue.500"
+            _hover={{ bg: !isConnected ? "blue.500" : "blue.400" }}
             width={["80%", "40%"]}
             size="md"
             isDisabled={!isConnected}
@@ -382,13 +395,24 @@ const SwapComponent = () => {
 
       <Box
         mt="4"
-        p="6"
+        p="4"
         bg="blue.800"
         rounded="xl"
         border="1px"
         borderColor="blue.600"
-        mx={4}
+        mx={2}
       >
+        <Box
+          bg="blue.500"
+          rounded="lg"
+          px="2"
+          display="inline-block"
+          color="white"
+          size="sm"
+          mb="2"
+        >
+          <Text fontSize={["xs", "sm"]}>{tokenOut}</Text>
+        </Box>
         <Text mb="2" fontSize={["md", "lg"]}>
           Buy Token :
         </Text>
@@ -409,7 +433,7 @@ const SwapComponent = () => {
             ))}
           </Select>
           <Input
-            flex="1"
+            flex="2"
             type="number"
             placeholder="0.0"
             bg="gray.700"
