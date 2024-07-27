@@ -268,6 +268,7 @@ const SwapComponent = () => {
     <Box
       maxW={["90%", "md"]}
       mx="auto"
+      my="20px"
       p={["2", "4"]}
       py="3"
       bg="gray.700"
@@ -275,7 +276,6 @@ const SwapComponent = () => {
       rounded="xl"
       shadow="2xl"
       border="1px"
-      marginBottom="20px"
       borderColor="blue.700"
     >
       {tokensIn.map((token, index) => (
