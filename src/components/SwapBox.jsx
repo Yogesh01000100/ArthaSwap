@@ -132,6 +132,7 @@ const SwapComponent = () => {
     const newTokensIn = [...tokensIn];
     newTokensIn[index].token = value;
     setTokensIn(newTokensIn);
+    updateTokenOut();
   };
 
   const handleAmountChange = (value, index) => {
@@ -153,12 +154,14 @@ const SwapComponent = () => {
 
       const newToken = { token: allTokens[nextTokenIndex], amount: "" };
       setTokensIn([...tokensIn, newToken]);
+      updateTokenOut();
     }
   };
 
   const removeTokenInput = (index) => {
     const updatedTokens = tokensIn.filter((_, i) => i !== index);
     setTokensIn(updatedTokens);
+    updateTokenOut();
   };
 
   const getAvailableTokens = (index) => {
@@ -176,8 +179,15 @@ const SwapComponent = () => {
     return allTokens.filter((token) => !selectedTokens.includes(token));
   };
 
+  const updateTokenOut = () => {
+    const unselectedTokens = getUnselectedTokens();
+    if (unselectedTokens.length > 0) {
+      setTokenOut(unselectedTokens[0]);
+    }
+  };
+
   const performSwap = async () => {
-    if (tokensIn.length === 0 || tokensIn.some((token) => !token.amount)) {
+    if (tokensIn.length === 0) {
       toast({
         title: "Missing Information",
         description: "Please enter the token amounts.",
@@ -411,6 +421,37 @@ const SwapComponent = () => {
             rounded="xl"
           />
         </HStack>
+        {isConnected && (
+          <StatGroup mt="2">
+            <Stat>
+              <StatLabel>Balance</StatLabel>
+              <Skeleton
+                isLoaded={!loadingBalances}
+                rounded="md"
+                width="max-content"
+              >
+                <StatNumber>{balances[tokenOut] || "0.0"}</StatNumber>
+              </Skeleton>
+            </Stat>
+            <Stat>
+              <StatLabel>Price</StatLabel>
+              <Skeleton
+                isLoaded={!loadingBalances}
+                rounded="md"
+                width="max-content" 
+              >
+                <StatNumber>
+                {`$${(
+                      balances[tokenOut] *
+                      (tokenOut === "DAI"
+                        ? prices["USDC"]
+                        : prices[tokenOut === "WETH" ? "ETH" : tokenOut])
+                    ).toFixed(2)}` || "$0.00"} 
+                </StatNumber>
+              </Skeleton>
+            </Stat>
+          </StatGroup>
+        )}
       </Box>
 
       <Flex justifyContent="center" mt="4" mb="1">
