@@ -264,7 +264,7 @@ const SwapComponent = () => {
       rounded="xl"
       shadow="2xl"
       border="1px"
-      borderColor="gray.600"
+      borderColor="blue.600"
     >
       {tokensIn.map((token, index) => (
         <Box
@@ -275,7 +275,7 @@ const SwapComponent = () => {
           rounded="xl"
           shadow="md"
           border="1px"
-          borderColor="gray.600"
+          borderColor="blue.600"
           mx="auto"
           position="relative"
         >
@@ -325,7 +325,7 @@ const SwapComponent = () => {
                       (token.token === "DAI"
                         ? prices["USDC"]
                         : prices[token.token === "WETH" ? "ETH" : token.token])
-                    ).toFixed(2)}` || "0"}
+                    ).toFixed(2)}` || "$0.00"}
                   </StatNumber>
                 </Skeleton>
               </Stat>
@@ -368,11 +368,12 @@ const SwapComponent = () => {
         <Flex justifyContent="center" mt="3">
           <Button
             onClick={addTokenInput}
-            rounded="xl"
-            bg="blue.600"
-            _hover={{ bg: "blue.500" }}
-            width={["90%", "50%"]}
+            rounded="2xl"
+            bg="pink.600"
+            _hover={{ bg: "pink.500" }}
+            width={["80%", "40%"]}
             size="md"
+            isDisabled={!isConnected}
           >
             Add Token
           </Button>
@@ -382,10 +383,10 @@ const SwapComponent = () => {
       <Box
         mt="4"
         p="6"
-        bg="gray.800"
+        bg="blue.800"
         rounded="xl"
         border="1px"
-        borderColor="gray.600"
+        borderColor="blue.600"
         mx={4}
       >
         <Text mb="2" fontSize={["md", "lg"]}>
@@ -411,7 +412,6 @@ const SwapComponent = () => {
             flex="1"
             type="number"
             placeholder="0.0"
-            borderColor="transparent"
             bg="gray.700"
             color="white"
             value={tokenOutAmount}
@@ -419,6 +419,8 @@ const SwapComponent = () => {
             _placeholder={{ color: "gray.500" }}
             fontSize={["sm", "xl"]}
             rounded="xl"
+            border="1px"
+            borderColor="blue.600"
           />
         </HStack>
         {isConnected && (
@@ -438,15 +440,15 @@ const SwapComponent = () => {
               <Skeleton
                 isLoaded={!loadingBalances}
                 rounded="md"
-                width="max-content" 
+                width="max-content"
               >
                 <StatNumber>
-                {`$${(
-                      balances[tokenOut] *
-                      (tokenOut === "DAI"
-                        ? prices["USDC"]
-                        : prices[tokenOut === "WETH" ? "ETH" : tokenOut])
-                    ).toFixed(2)}` || "$0.00"} 
+                  {`$${(
+                    balances[tokenOut] *
+                    (tokenOut === "DAI"
+                      ? prices["USDC"]
+                      : prices[tokenOut === "WETH" ? "ETH" : tokenOut])
+                  ).toFixed(2)}` || "$0.00"}
                 </StatNumber>
               </Skeleton>
             </Stat>
@@ -471,8 +473,8 @@ const SwapComponent = () => {
           px="9"
           textColor="white"
           isDisabled={!isConnected}
-          bg={!isConnected ? "pink.500" : "pink.500"}
-          _hover={{ bg: !isConnected ? "pink.400" : "pink.500" }}
+          bg={!isConnected ? "pink.400" : "pink.500"}
+          _hover={{ bg: !isConnected ? "pink.400" : "pink.400" }}
         >
           {tokensIn.length > 1 ? "Multi-hop Swap" : "Swap"}
         </Button>
