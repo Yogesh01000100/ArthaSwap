@@ -18,6 +18,7 @@ const ModernWarningCard = () => {
       fontSize="smaller"
       borderColor="red.400"
       boxShadow="sm"
+      width="60%"
     >
       <Icon as={WarningTwoIcon} w={4} h={4} color="red.500" mr={3} />
       <Text fontSize="sm" color={textColor}>
